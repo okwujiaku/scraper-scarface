@@ -1,0 +1,28 @@
+# Render Blueprint — Scarface Background Worker
+# Set USER_TOKEN in the Render dashboard (Environment), not here.
+services:
+  - type: worker
+    name: scarface-join-tracker
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: python bot.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: CHAT_ID
+        value: "1511500822872195195"
+      - key: CLIENT_NAME
+        value: Scarface
+      - key: CAPTURE_MODE
+        value: all
+      - key: DEBUG
+        value: "false"
+      - key: SEND_STARTUP_PING
+        value: "true"
+      - key: TEST_CAPTURE
+        value: "false"
+      - key: DISPLAY_TIMEZONE
+        value: Africa/Lagos
+      - key: USER_TOKEN
+        sync: false
