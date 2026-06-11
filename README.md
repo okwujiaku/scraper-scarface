@@ -1,19 +1,35 @@
-# Scarface Discord Join Scraper
+# Scarface Discord Join Scraper (Option C — one worker per brand)
 
-Self-bot join tracker for **zee_co2** — all servers that account is in. Forwards captures to **Scarface Auto save** group DM.
+Self-bot join tracker for **zee_co2** — forwards captures to the **Scarface Auto save**
+group chat. It subscribes to member-join events on every server the account is in
+and forwards a **NEW MEMBER CAPTURED** card to one group chat.
 
-## Quick config (`.env`)
+## Folder layout
 
-```env
-USER_TOKEN=          # zee_co2 token — never commit
-CHAT_ID=1511500822872195195
-CLIENT_NAME=Scarface
-CAPTURE_MODE=all
-DISPLAY_TIMEZONE=Africa/Lagos
-DEBUG=false
-TEST_CAPTURE=false
-SEND_STARTUP_PING=true
 ```
+scraper-scarface/
+├── bot/
+│   ├── bot.py            # the actual bot (run this)
+│   ├── requirements.txt
+│   └── .env.example
+├── scripts/new-customer.sh
+├── templates/render-env.example
+├── bot.py                # launcher (runs bot/bot.py from repo root)
+├── requirements.txt      # -r bot/requirements.txt
+├── .env                  # USER_TOKEN + CHAT_ID (never commit)
+├── .gitignore
+└── README.md
+```
+
+## How it captures
+
+1. **Gateway joins** — on startup it calls `guild.subscribe(member_updates=True)`
+   on every server (requires `discord.py-self>=2.1`), so `on_member_join` fires
+   for live joins newer than `JOIN_MAX_AGE_SECONDS` (default 600s).
+2. **Join system messages** — Discord's native "X joined" messages in a welcome
+   channel the account can read.
+3. **Log-bot / welcome-bot posts** — "New Member Joined!" cards or "Welcome @user"
+   greetings.
 
 ## Local run
 
@@ -23,27 +39,13 @@ pip install -r requirements.txt
 python bot.py
 ```
 
-Run **one** instance per token (local **or** Render, not both).
+Run **one** instance per token (local **or** Render, never both).
 
-## Push to GitHub
+## Render (Background Worker)
 
-```powershell
-cd C:\Users\HP\Downloads\scraper-scarface
-git init
-git add bot.py requirements.txt README.md .env.example .gitignore render.yaml runtime.txt
-git commit -m "Scarface join tracker for zee_co2"
-git branch -M main
-git remote add origin https://github.com/okwujiaku/scraper-scarface.git
-git push -u origin main
-```
-
-Create the empty repo `scraper-scarface` on GitHub first if it does not exist.
-
-## Render
-
-1. **New → Background Worker** → connect `okwujiaku/scraper-scarface`
-2. Build: `pip install -r requirements.txt` · Start: `python bot.py`
-3. Set env vars (see `render.yaml`) — add **`USER_TOKEN`** in dashboard
-4. Ensure `PYTHON_VERSION=3.11.9` and `DISPLAY_TIMEZONE=Africa/Lagos`
+- **Root Directory:** `bot`
+- **Build:** `pip install -r requirements.txt`
+- **Start:** `python bot.py`
+- **Env:** `USER_TOKEN` (secret) + `CHAT_ID` + `CLIENT_NAME=Scarface` + `PYTHON_VERSION=3.11.9`
 
 Self-botting violates Discord ToS; use at your own risk.

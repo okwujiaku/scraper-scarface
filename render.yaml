@@ -5,6 +5,7 @@ services:
     name: scarface-join-tracker
     runtime: python
     plan: starter
+    rootDir: bot
     buildCommand: pip install -r requirements.txt
     startCommand: python bot.py
     envVars:
@@ -14,14 +15,6 @@ services:
         value: "1511500822872195195"
       - key: CLIENT_NAME
         value: Scarface
-      - key: CAPTURE_MODE
-        value: all
-      - key: DEBUG
-        value: "false"
-      - key: SEND_STARTUP_PING
-        value: "true"
-      - key: TEST_CAPTURE
-        value: "false"
       - key: DISPLAY_TIMEZONE
         value: Africa/Lagos
       - key: USER_TOKEN
